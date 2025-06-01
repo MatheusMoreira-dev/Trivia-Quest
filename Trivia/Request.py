@@ -1,6 +1,4 @@
-import math
-
-import requests
+import requests,math
 
 #Parâmetros: amount / idCategory / type / difficulty
 #Nota: Apenas "amount" é obrigatório, caso os demais não sejam passados, a api aleatoriza seu argumento
@@ -58,16 +56,15 @@ class Question:
 
         return console_question
 
-def teste(amount=1):
-    #token = requests.get('https://tryvia.ptr.red/api_token.php?command=request').json()['token']
-    #request = Request(amount,token).get_deserialized_questions()
+def teste(amount=1, limit_per_request = 50):
+    token = requests.get('https://tryvia.ptr.red/api_token.php?command=request').json()['token']
+    calls = []
 
-    if (amount > 50):
-        qtd_of_requests = math.ceil(amount/50)
-        print(qtd_of_requests)
+    while (amount > 0):
+        num_questions_per_call = min(amount, limit_per_request)
+        calls.append(Request(num_questions_per_call,token).get_deserialized_questions())
+        amount -= num_questions_per_call
 
-    #for question in request:
-        #print(question.question)
-teste(51)
-#response = newRequest.response()
-#questions = response['results'][0]
+    return calls
+
+print(teste(201))
